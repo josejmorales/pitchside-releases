@@ -50,6 +50,11 @@ the ones you don't follow.
 
 Type `pitchside update` any time. (Pitchside also tells you when a new version is out.)
 
+## Going deeper
+
+- [How the title-race odds work](how-the-odds-work.md): the maths behind `race`, the simulation behind
+  `race … odds`, and what the estimates can and can't tell you.
+
 ## Trouble?
 
 - **"command not found" / "not recognized":** close the terminal and open a new one.
