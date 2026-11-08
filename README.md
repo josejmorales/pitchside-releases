@@ -64,9 +64,9 @@ Type `pitchside update` any time. (Pitchside also tells you when a new version i
 
 ## Uninstall
 
-Run `pitchside uninstall`. It shows what it will remove and asks before deleting anything. It also asks
-separately whether to delete your settings (your API key and league order), so you can keep them if you
-plan to reinstall.
+Run `pitchside uninstall`. It shows what it will remove and asks before deleting anything. It always
+removes the small cache files pitchside saved, and asks separately whether to delete your settings (your API
+key and league order), so you can keep them if you plan to reinstall.
 
 Prefer to do it by hand?
 

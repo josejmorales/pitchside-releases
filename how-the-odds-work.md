@@ -51,9 +51,14 @@ three against a weak one.
 
 - **Recent games count more.** A game's weight halves every 100 days, so late-season ratings follow
   current form.
-- **A small prior keeps early ratings sensible.** Each team starts with four pseudo-games of exactly
-  average form, so a couple of lucky results don't produce wild ratings. The more games a team plays, the
-  less this matters.
+- **Early on, last season is the starting point.** With only a handful of games played, results say little.
+  So each team begins from three quarters of the way to its rating from last season (the rest is "average"),
+  and that starting point counts as eight games of evidence. A team promoted this year has no top-flight
+  rating, so it starts weaker than average (it scores about 15% less and concedes about 15% more).
+  As real results arrive they take over, and by mid-season the effect is small (see the test below).
+  Last season's ratings are fetched the first time you ask for `odds` in a league, then saved, so later runs
+  need no extra request. Only a pair of numbers per team is saved, never match data. If last season can't be
+  fetched, the model falls back to a plain average starting point (four pseudo-games).
 
 ### 2. Admit the ratings are uncertain
 
@@ -114,6 +119,20 @@ predictions in all.
 - **Title picks at halfway:** the model's favourite won the league 11 times in 15. In the four misses the
   eventual champion had been given 21%, 19%, 30% and 40%, never a near-zero chance.
 
+**Starting from last season.** Using last season as the starting point was tested separately on the 2024 and
+2025 seasons (10 league-seasons, 3,072 predictions), with an extra snapshot only about three matchdays in:
+
+| Through the season | Plain average start | Last season as the start | Better by |
+|---|---|---|---|
+| 10% | 0.1091 | 0.0947 | 13% |
+| 25% | 0.0764 | 0.0704 | 8% |
+| 50% | 0.0576 | 0.0560 | 3% |
+| 75% | 0.0408 | 0.0398 | 2% |
+
+(Brier score, lower is better.) The benefit is early in the season and fades, as expected. The settings were
+chosen by comparing seven variants on the same seasons, and the assumption for promoted teams was estimated from
+those seasons too, so expect the gain on genuinely new seasons to be somewhat smaller.
+
 **Read this with care.** The predictions aren't independent: one season's table produces about 80 of them,
 so the real sample is closer to 45 snapshots than 3,500. Three seasons in five leagues can show a model has
 no obvious flaw, not that it is right. The test also used generic lines (top 1, top 4 and so on) rather than each season's exact European places.
@@ -132,8 +151,8 @@ The odds are a rough guide, not a forecast.
 
 - **The settings are untuned guesses.** The half-life and prior size gave good results in the test below, but
   they were chosen by reasoning, not fitted to data.
-- **Goals are all it sees.** No injuries, transfers, suspensions, tactics or fixture congestion. Last season
-  isn't used either, so early in the season the prior just pulls teams toward average.
+- **Results are nearly all it sees.** No injuries, transfers, suspensions, tactics or fixture congestion. Last
+  season only sets the starting point, and squads change between seasons.
 - **Goals are treated as independent,** the standard simplification. I expected it to undercount draws, but it
   doesn't here: the model gives a typical match about a 25% chance of a draw against 25.6% of draws in the
   5,256 matches tested. A correction for low scores (the Dixon-Coles adjustment) was tried and made the score
@@ -148,9 +167,7 @@ The odds are a rough guide, not a forecast.
 
 ## Ideas for making it better
 
-1. Use last season's strength as the starting point for early-season ratings (the simulation helps most early,
-   and this is where it has the most room).
-2. Let team strength drift over the rest of the season, instead of staying fixed.
-3. Separate home and away ratings per team.
-4. Finish any match that is in progress.
-5. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.
+1. Let team strength drift over the rest of the season, instead of staying fixed.
+2. Separate home and away ratings per team.
+3. Finish any match that is in progress.
+4. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.
