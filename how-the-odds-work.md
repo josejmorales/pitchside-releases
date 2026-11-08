@@ -81,12 +81,51 @@ random tiebreak.
 Teams the exact maths has already settled show 100% or 0%, so the two parts never disagree.
 The random seed comes from the data, so the same table gives the same numbers each time.
 
+## How well does it work?
+
+I tested it on three finished seasons (2023, 2024 and 2025) of the Premier League, La Liga, Serie A, Bundesliga
+and Ligue 1: 15 league-seasons. For each one, the test went back to 25%, 50% and 75% of the way through the
+season, used only the results up to that point, simulated the rest, and compared the odds with what actually
+happened. The lines tested were top 1, top 4, the top half, and "safe from the bottom three", about 3,500
+predictions in all.
+
+**When the model said X%, how often did it happen?**
+
+| Model said | Happened | Predictions |
+|---|---|---|
+| 0–2% | 0.2% | 1,273 |
+| 2–10% | 2.3% | 301 |
+| 10–20% | 14.5% | 165 |
+| 20–30% | 20.5% | 127 |
+| 30–40% | 35.9% | 117 |
+| 40–50% | 42.7% | 89 |
+| 50–60% | 57.5% | 106 |
+| 60–70% | 76.1% | 109 |
+| 70–80% | 73.2% | 123 |
+| 80–90% | 85.4% | 144 |
+| 90–98% | 95.3% | 232 |
+| 98–100% | 99.9% | 670 |
+
+- **Close to honest across the range.** Most bins land within a few points of the stated odds. The clearest
+  miss is the 60–70% bin, where the event happened 76% of the time, so the model was underconfident there.
+  The 2–10% and 20–30% bins ran a few points high.
+- **It gets better as the season goes on.** The Brier score (an accuracy measure where lower is better and 0 is
+  perfect) was 0.075 at 25% through, 0.057 at 50% and 0.042 at 75%.
+- **Title picks at halfway:** the model's favourite won the league 11 times in 15. In the four misses the
+  eventual champion had been given 21%, 19%, 30% and 40%, never a near-zero chance.
+
+**Read this with care.** The predictions aren't independent: one season's table produces about 80 of them,
+so the real sample is closer to 45 snapshots than 3,500. Three seasons in five leagues can show a model has
+no obvious flaw, not that it is right. The test also used generic lines (top 1, top 4 and so on) rather than
+each season's exact European places, and it compared the model only against a naive baseline (always
+predicting the line's base rate), not against a simple table-based one.
+
 ## What it does not know
 
 The odds are a rough guide, not a forecast.
 
-- **It has not been checked against real results yet.** "40%" is what the model says, not a verified 40%.
-  The half-life, prior size and home advantage are reasonable guesses that haven't been tuned.
+- **The settings are untuned guesses.** The half-life and prior size gave good results in the test below, but
+  they were chosen by reasoning, not fitted to data.
 - **Goals are all it sees.** No injuries, transfers, suspensions, tactics or fixture congestion. Last season
   isn't used either, so early in the season the prior just pulls teams toward average.
 - **Draws are probably slightly underestimated.** Independent Poisson goals produce fewer low-scoring draws
@@ -101,8 +140,10 @@ The odds are a rough guide, not a forecast.
 
 ## Ideas for making it better
 
-1. Backtest on past seasons to see whether the percentages are calibrated, and tune the settings against that.
+1. Compare against a simple baseline built from the table (position or points gap), to measure how much the
+   model really adds.
 2. Use last season's strength as the starting point for early-season ratings.
 3. Correct the draw rate (a small fix for 0–0 and 1–1 results).
 4. Separate home and away ratings per team.
 5. Finish any match that is in progress.
+6. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.
