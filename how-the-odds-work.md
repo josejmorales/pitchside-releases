@@ -116,9 +116,15 @@ predictions in all.
 
 **Read this with care.** The predictions aren't independent: one season's table produces about 80 of them,
 so the real sample is closer to 45 snapshots than 3,500. Three seasons in five leagues can show a model has
-no obvious flaw, not that it is right. The test also used generic lines (top 1, top 4 and so on) rather than
-each season's exact European places, and it compared the model only against a naive baseline (always
-predicting the line's base rate), not against a simple table-based one.
+no obvious flaw, not that it is right. The test also used generic lines (top 1, top 4 and so on) rather than each season's exact European places.
+
+**Is the simulation worth it?** I compared it with a deliberately simple rival: a logistic curve on the points
+gap to the line, scaled by games left, fitted on the very predictions it was scored on so it had every
+advantage. The overall Brier score was 0.058 for the simulation and 0.062 for the points-gap rule, about 6%
+better. The gap is widest early on (0.075 against 0.082 at 25% through) and nearly gone at halfway
+(0.0565 against 0.0575). Always predicting the line's base rate scored 0.149. So the simulation does beat a
+simple table rule, but not by a lot: most of the value is in the exact maths and in knowing roughly how
+many points are left, and the ratings add a modest amount on top.
 
 ## What it does not know
 
@@ -128,8 +134,10 @@ The odds are a rough guide, not a forecast.
   they were chosen by reasoning, not fitted to data.
 - **Goals are all it sees.** No injuries, transfers, suspensions, tactics or fixture congestion. Last season
   isn't used either, so early in the season the prior just pulls teams toward average.
-- **Draws are probably slightly underestimated.** Independent Poisson goals produce fewer low-scoring draws
-  than real football.
+- **Goals are treated as independent,** the standard simplification. I expected it to undercount draws, but it
+  doesn't here: the model gives a typical match about a 25% chance of a draw against 25.6% of draws in the
+  5,256 matches tested. A correction for low scores (the Dixon-Coles adjustment) was tried and made the score
+  very slightly worse, so it is switched off.
 - **One home advantage for the whole league,** though some teams are much stronger at home.
 - **A match in progress is half-counted.** Live standings include its current score but it is not simulated
   to the end, a small bias that only matters while a game is on.
@@ -140,10 +148,9 @@ The odds are a rough guide, not a forecast.
 
 ## Ideas for making it better
 
-1. Compare against a simple baseline built from the table (position or points gap), to measure how much the
-   model really adds.
-2. Use last season's strength as the starting point for early-season ratings.
-3. Correct the draw rate (a small fix for 0–0 and 1–1 results).
-4. Separate home and away ratings per team.
-5. Finish any match that is in progress.
-6. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.
+1. Use last season's strength as the starting point for early-season ratings (the simulation helps most early,
+   and this is where it has the most room).
+2. Let team strength drift over the rest of the season, instead of staying fixed.
+3. Separate home and away ratings per team.
+4. Finish any match that is in progress.
+5. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.
