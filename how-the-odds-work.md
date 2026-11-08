@@ -63,7 +63,7 @@ three against a weak one.
 ### 2. Admit the ratings are uncertain
 
 A rating is an estimate. A team with 15 goals scored is much less certain than one with 60. The simulation
-is split into 100 batches. Before each batch, every team's attack and defence are nudged by a random amount
+is split into 500 batches. Before each batch, every team's attack and defence are nudged by a random amount
 sized to how little data supports them (roughly `1 ÷ √goals`, so 15 goals gives about ±26% and 40 goals about
 ±16%). Within a batch the ratings are fixed; across batches they vary. This stops the model from claiming more
 certainty than the results justify.
@@ -82,6 +82,12 @@ random tiebreak.
 | **Chance** | Share of simulated seasons in which the team finishes inside the line (top 1 for the title) |
 | **Exp pts** | Average final points |
 | **Finish** | The range of positions that covers 80% of the simulated seasons (10th to 90th percentile) |
+
+**Δ MD9 (change since a matchday).** The odds are worked out a second time as they stood after an earlier
+matchday: the table is rebuilt from the games played by then, the ratings are refitted using only those games,
+and the rest of the season (including games since played) is simulated. The difference is the impact of the
+results in between. By default it compares with the previous matchday; `since 5` compares with matchday 5.
+Two runs of the same simulation differ by a point or two on their own, so changes under 3 points show as `·`.
 
 Teams the exact maths has already settled show 100% or 0%, so the two parts never disagree.
 The random seed comes from the data, so the same table gives the same numbers each time.
