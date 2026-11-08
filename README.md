@@ -56,8 +56,33 @@ Type `pitchside update` any time. (Pitchside also tells you when a new version i
 - **Windows warns about the file:** the app isn't signed yet, so Windows Defender or SmartScreen may
   question it. Choose *More info*, then *Run anyway*, or tell whoever sent you this.
 - **Mac says it can't be opened:** tell whoever sent you this; it shouldn't happen with the install line above.
-- **Uninstall (Mac):** `rm ~/.local/bin/pitchside` and, to forget your key, `rm -r ~/.config/pitchside`.
-- **Uninstall (Windows):** delete the `pitchside` folder in `%LOCALAPPDATA%` and, to forget your key,
-  the `.config\pitchside` folder in your user folder.
+
+## Uninstall
+
+Run `pitchside uninstall`. It shows what it will remove and asks before deleting anything. It also asks
+separately whether to delete your settings (your API key and league order), so you can keep them if you
+plan to reinstall.
+
+Prefer to do it by hand?
+
+**Mac**
+
+```sh
+rm ~/.local/bin/pitchside          # the program
+rm -r ~/.config/pitchside          # optional: your key and settings
+```
+
+The installer also added a line ending in `# added by the pitchside installer` to `~/.zshrc`
+(or `~/.bash_profile`). You can delete that line, or leave it; it does no harm.
+
+**Windows (PowerShell)**
+
+```powershell
+Remove-Item -Recurse "$env:LOCALAPPDATA\pitchside"      # the program
+Remove-Item -Recurse "$HOME\.config\pitchside"          # optional: your key and settings
+```
+
+The installer also added the `pitchside` folder to your PATH. To remove it, search Windows for
+*Edit the environment variables for your account*, select `Path`, and delete that entry. Leaving it does no harm.
 
 Every download is checked against the release's `SHA256SUMS` before it is installed.
