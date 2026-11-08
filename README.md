@@ -38,8 +38,9 @@ to `~/.zshrc`, or `~/.bash_profile` if you use bash), which is why step 3 needs 
 
 ### First run
 
-Pitchside explains what it needs, opens the sign-up page for your free key, checks the key when you paste it,
-and asks which league you follow most. Then try `table`, `scores`, `today` or `scorers`, and type `help`
+Pitchside explains what it needs and opens the football-data.org sign-up page in your browser. Enter your
+name and email, tick their terms box and submit; your free key arrives by email (check spam if it's slow).
+Leave pitchside open, then paste the key when it arrives. It checks the key and asks which league you follow most. Then try `table`, `scores`, `today` or `scorers`, and type `help`
 to see everything. See [What you can do](#what-you-can-do) below.
 
 ### Update
@@ -94,8 +95,9 @@ You don't need to change any settings: the installer adds pitchside to your PATH
 
 ### First run
 
-Pitchside explains what it needs, opens the sign-up page for your free key, checks the key when you paste it,
-and asks which league you follow most. Then try `table`, `scores`, `today` or `scorers`, and type `help`
+Pitchside explains what it needs and opens the football-data.org sign-up page in your browser. Enter your
+name and email, tick their terms box and submit; your free key arrives by email (check spam if it's slow).
+Leave pitchside open, then paste the key when it arrives. It checks the key and asks which league you follow most. Then try `table`, `scores`, `today` or `scorers`, and type `help`
 to see everything. See [What you can do](#what-you-can-do) below.
 
 ### Update
