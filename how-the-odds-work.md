@@ -1,7 +1,8 @@
-# How the title-race odds work
+# How the odds work
 
 `race` (also `contention`) answers "who can still win the league, who is out, and how likely is each team?"
 It has two parts: exact arithmetic that is always right, and an optional simulation (`odds`) that is an estimate.
+The same team ratings also give the chances of a single match: see [Odds for one match](#odds-for-one-match-scores-odds).
 
 ```
 race title                 exact maths for the title
@@ -71,9 +72,20 @@ certainty than the results justify.
 ### 3. Play out the season
 
 Up to 10,000 seasons are simulated (fewer when many fixtures remain, to keep it to a second or two).
-Each starts from today's table. For every remaining fixture it draws a home and away score, awards the points
-and updates goal difference. Teams are ranked on points, then goal difference, then goals scored, then a
-random tiebreak.
+Each starts from the table of finished games. For every remaining fixture it draws a home and away score,
+awards the points and updates goal difference. Teams are ranked on points, then goal difference, then goals
+scored, then a random tiebreak.
+
+**Games in play are played out, not counted as final.** A match that is on right now starts from its current
+score, and only the time left is simulated: each team's expected goals are scaled by the share of the match
+remaining, and any goals drawn are added to the score so far. So a 2–0 lead with 10 minutes left is worth almost
+three points, while the same lead after 20 minutes still leaves room for a comeback. The plain table and the
+`Gap` and `Magic` columns still treat the live score as if the game ended now, and the odds only show
+100% or 0% for a team that is settled whatever the live games do.
+
+The free plan doesn't give the match minute, so the clock is estimated from the kick-off time, allowing 15
+minutes for half-time (and half-time itself counts as exactly half over). A late kick-off or a long stoppage
+will make that a few minutes out.
 
 ### 4. Read the results
 
@@ -91,6 +103,24 @@ Two runs of the same simulation differ by a point or two on their own, so change
 
 Teams the exact maths has already settled show 100% or 0%, so the two parts never disagree.
 The random seed comes from the data, so the same table gives the same numbers each time.
+
+## Odds for one match (`scores odds`)
+
+`scores odds` adds three columns to a matchday: the chance of a home win, a draw and an away win for every
+game that hasn't finished.
+
+- It uses the same ratings as the race odds: attack and defence fitted from this season's finished games,
+  adjusted for opponents, with recent games counting more and last season as the starting point.
+- Each team's expected goals come from the formula in Part 2, and the chance of each score comes from the
+  Poisson distribution. Adding up every score where the home side wins, draws or loses gives the three numbers.
+- Ratings are uncertain, so the answer is averaged over many plausible versions of the two teams' strengths.
+  That keeps a mismatch from looking more certain than it is.
+- **Games in play** start from the current score and use only the time left, the same way as in the season
+  simulation. A draw becomes less likely as the clock runs down, and a lead becomes safer.
+
+What it knows is results and the score. It does not know line-ups, injuries, suspensions or red cards. Unlike the
+season odds, these single-match probabilities haven't been backtested yet: the test above checks the
+season-long chances.
 
 ## How well does it work?
 
@@ -164,8 +194,8 @@ The odds are a rough guide, not a forecast.
   5,256 matches tested. A correction for low scores (the Dixon-Coles adjustment) was tried and made the score
   very slightly worse, so it is switched off.
 - **One home advantage for the whole league,** though some teams are much stronger at home.
-- **A match in progress is half-counted.** Live standings include its current score but it is not simulated
-  to the end, a small bias that only matters while a game is on.
+- **The clock for a game in play is an estimate** (see above), and the model doesn't know about red cards or
+  substitutions that change a game's course.
 - **Tiebreaks are simplified** to goal difference then goals scored; many leagues use head-to-head first.
 - **Zone lines are approximate.** European places can move with cup results.
 - **Sampling noise:** at 10,000 runs a 50% figure is good to about half a point; early in the season there are
@@ -175,5 +205,5 @@ The odds are a rough guide, not a forecast.
 
 1. Let team strength drift over the rest of the season, instead of staying fixed.
 2. Separate home and away ratings per team.
-3. Finish any match that is in progress.
+3. Backtest the single-match probabilities, as the season odds were.
 4. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.

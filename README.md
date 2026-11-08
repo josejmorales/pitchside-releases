@@ -148,7 +148,7 @@ Switch league by name: `league laliga`, or ask for one directly: `table bundesli
 
 ## Going deeper
 
-- [How the title-race odds work](how-the-odds-work.md): the maths behind `race`, the simulation behind
-  `race … odds`, and what the estimates can and can't tell you.
+- [How the odds work](how-the-odds-work.md): the maths behind `race`, the simulation behind
+  `race … odds`, the single-match chances in `scores odds`, and what the estimates can and can't tell you.
 
 Every download is checked against the release's `SHA256SUMS` before it is installed.
