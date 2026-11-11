@@ -1,6 +1,6 @@
 # How the odds work
 
-`race` (also `contention`) answers "who can still win the league, who is out, and how likely is each team?"
+`race` answers "who can still win the league, who is out, and how likely is each team?"
 It has two parts: exact arithmetic that is always right, and an optional simulation (`odds`) that is an estimate.
 The same team ratings also give the chances of a single match: see [Odds for one match](#odds-for-one-match-scores-odds).
 
