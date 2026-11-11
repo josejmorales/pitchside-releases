@@ -50,12 +50,12 @@ The ratings come from **every finished match in the season, fitted together**. T
 opponent-adjusted: scoring three against a strong defence raises a team's attack rating more than scoring
 three against a weak one.
 
-- **Recent games count more.** A game's weight halves every 100 days, so late-season ratings follow
+- **Recent games count more.** A game's weight halves every 150 days, so late-season ratings follow
   current form.
 - **Early on, last season is the starting point.** With only a handful of games played, results say little.
-  So each team begins from three quarters of the way to its rating from last season (the rest is "average"),
-  and that starting point counts as eight games of evidence. A team promoted this year has no top-flight
-  rating, so it starts weaker than average (it scores about 15% less and concedes about 15% more).
+  So each team begins from its rating from last season in full,
+  and that starting point counts as twelve games of evidence. A team promoted this year has no top-flight
+  rating, so it starts weaker than average (it scores about 20% less and concedes about 20% more).
   As real results arrive they take over, and by mid-season the effect is small (see the test below).
   Last season's ratings are fetched the first time you ask for `odds` in a league, then saved, so later runs
   need no extra request. Only a pair of numbers per team is saved, never match data. If last season can't be
@@ -124,69 +124,83 @@ season-long chances.
 
 ## How well does it work?
 
-I tested it on three finished seasons (2023, 2024 and 2025) of the Premier League, La Liga, Serie A, Bundesliga
-and Ligue 1: 15 league-seasons. For each one, the test went back to 25%, 50% and 75% of the way through the
-season, used only the results up to that point, simulated the rest, and compared the odds with what actually
-happened. The lines tested were top 1, top 4, the top half, and "safe from the bottom three", about 3,500
-predictions in all.
+I tested it on 59 finished league-seasons: the Premier League, La Liga, Serie A, Bundesliga and Ligue 1, from
+2014/15 to 2025/26 (results from football-data.co.uk; the one season cut short by COVID is left out). For each
+one, the test went back to 25%, 50% and 75% of the way through the season, used only the results up to that
+point, simulated the rest, and compared the odds with what actually happened. The lines tested were top 1,
+top 4, the top half, and "safe from the bottom three", 13,800 predictions in all. `pitchside model` shows the
+same numbers.
 
 **When the model said X%, how often did it happen?**
 
 | Model said | Happened | Predictions |
 |---|---|---|
-| 0–2% | 0.2% | 1,273 |
-| 2–10% | 2.3% | 301 |
-| 10–20% | 14.5% | 165 |
-| 20–30% | 20.5% | 127 |
-| 30–40% | 35.9% | 117 |
-| 40–50% | 42.7% | 89 |
-| 50–60% | 57.5% | 106 |
-| 60–70% | 76.1% | 109 |
-| 70–80% | 73.2% | 123 |
-| 80–90% | 85.4% | 144 |
-| 90–98% | 95.3% | 232 |
-| 98–100% | 99.9% | 670 |
+| 0–2% | 0.1% | 5,404 |
+| 2–10% | 4.7% | 1,051 |
+| 10–20% | 13.3% | 622 |
+| 20–30% | 21.4% | 472 |
+| 30–40% | 36.6% | 369 |
+| 40–50% | 40.4% | 376 |
+| 50–60% | 58.3% | 355 |
+| 60–70% | 66.0% | 403 |
+| 70–80% | 78.1% | 456 |
+| 80–90% | 87.2% | 546 |
+| 90–98% | 95.1% | 875 |
+| 98–100% | 99.9% | 2,871 |
 
-- **Close to honest across the range.** Most bins land within a few points of the stated odds. The clearest
-  miss is the 60–70% bin, where the event happened 76% of the time, so the model was underconfident there.
-  The 2–10% and 20–30% bins ran a few points high.
+- **Close to honest across the range.** Most bins land within a few points of the stated odds. Chances of
+  50% or more came off slightly more often than stated (the model is a little timid about favourites), and
+  the 20–50% bins ran a few points high.
 - **It gets better as the season goes on.** The Brier score (an accuracy measure where lower is better and 0 is
-  perfect) was 0.075 at 25% through, 0.057 at 50% and 0.042 at 75%.
-- **Title picks at halfway:** the model's favourite won the league 11 times in 15. In the four misses the
-  eventual champion had been given 21%, 19%, 30% and 40%, never a near-zero chance.
+  perfect) was 0.070 at 25% through, 0.054 at 50% and 0.037 at 75%.
+- **Against reading the table:** at 25% through, the model's pick for the champion was right 68% of the time
+  against 54% for the league leader; at halfway 73% against 69%; at 75% the table was as good (88% against 90%).
+  The model's value is the probabilities, not the picks.
+- **How much room is left?** Given every team's true strength (which is cheating), the error would fall by only
+  17% at 25% through, 11% at 50% and 5% at 75%. Most of what is left is luck in games not yet played.
 
-**Starting from last season.** Using last season as the starting point was tested separately on the 2024 and
-2025 seasons (10 league-seasons, 3,072 predictions), with an extra snapshot only about three matchdays in:
+**Starting from last season.** The same snapshots, plus one about three matchdays in, with and without last
+season as the starting point:
 
 | Through the season | Plain average start | Last season as the start | Better by |
 |---|---|---|---|
-| 10% | 0.1091 | 0.0947 | 13% |
-| 25% | 0.0764 | 0.0704 | 8% |
-| 50% | 0.0576 | 0.0560 | 3% |
-| 75% | 0.0408 | 0.0398 | 2% |
+| 10% | 0.1094 | 0.0854 | 22% |
+| 25% | 0.0805 | 0.0702 | 13% |
+| 50% | 0.0574 | 0.0538 | 6% |
+| 75% | 0.0380 | 0.0366 | 4% |
 
-(Brier score, lower is better.) The benefit is early in the season and fades, as expected. The settings were
-chosen by comparing seven variants on the same seasons, and the assumption for promoted teams was estimated from
-those seasons too, so expect the gain on genuinely new seasons to be somewhat smaller.
+(Brier score, lower is better.) The benefit is early in the season and fades, as expected.
 
-**Read this with care.** The predictions aren't independent: one season's table produces about 80 of them,
-so the real sample is closer to 45 snapshots than 3,500. Three seasons in five leagues can show a model has
-no obvious flaw, not that it is right. The test also used generic lines (top 1, top 4 and so on) rather than each season's exact European places.
+**Tuning.** An earlier version used guessed settings (a 100-day half-life, three quarters of last season, eight
+games of weight, promoted teams 15% weaker). I tried 25 alternatives and then the best four together:
+12 games of weight, all of last season, a 150-day half-life and promoted teams 20% weaker. That cut the race-odds
+error by 2.9% (95% interval 1.8% to 4.0%) in both the early and later years and in all five leagues. The settings
+were chosen on those same leagues, so I checked them on three leagues they were never tuned on: they helped in the
+Eredivisie (4.0%) and Portugal (2.4%) and hurt in the English Championship (1.8%), a league with a lot of yearly
+turnover, where leaning on last season pays less. Overall that check was inconclusive (0.8% better, interval
+2.2% better to 0.5% worse), so expect the real gain on new data to be smaller than 2.9%. Two things that did not
+help: capping huge scores, and bookmaker odds. Odds for the next two rounds improved the error by only about 2%;
+odds for every remaining game looked 11–29% better, but only because they were set right before each game and so
+know things that hadn't happened yet.
+
+**Read this with care.** The predictions aren't independent: one season's table produces about 230 of them, so
+the real sample is the 59 league-seasons, not 13,800. The test also used generic lines (top 1, top 4 and so on)
+rather than each season's exact European places.
 
 **Is the simulation worth it?** I compared it with a deliberately simple rival: a logistic curve on the points
 gap to the line, scaled by games left, fitted on the very predictions it was scored on so it had every
-advantage. The overall Brier score was 0.058 for the simulation and 0.062 for the points-gap rule, about 6%
-better. The gap is widest early on (0.075 against 0.082 at 25% through) and nearly gone at halfway
-(0.0565 against 0.0575). Always predicting the line's base rate scored 0.149. So the simulation does beat a
-simple table rule, but not by a lot: most of the value is in the exact maths and in knowing roughly how
+advantage. The overall Brier score was 0.054 for the simulation and 0.064 for the points-gap rule, about 16%
+better. The gap is widest early on (0.070 against 0.089 at 25% through) and small by 75% (0.037 against
+0.040). Always predicting the line's base rate scored 0.148. So the simulation does beat a
+simple table rule, with the most value early in the season: much of it is in the exact maths and in knowing roughly how
 many points are left, and the ratings add a modest amount on top.
 
 ## What it does not know
 
 The odds are a rough guide, not a forecast.
 
-- **The settings are untuned guesses.** The half-life and prior size gave good results in the test below, but
-  they were chosen by reasoning, not fitted to data.
+- **The settings were tuned on five leagues.** They were fitted on the big five and checked on three others
+  (see above); they may suit some leagues less well than others.
 - **Results are nearly all it sees.** No injuries, transfers, suspensions, tactics or fixture congestion. Last
   season only sets the starting point, and squads change between seasons.
 - **Goals are treated as independent,** the standard simplification. I expected it to undercount draws, but it
@@ -206,4 +220,3 @@ The odds are a rough guide, not a forecast.
 1. Let team strength drift over the rest of the season, instead of staying fixed.
 2. Separate home and away ratings per team.
 3. Backtest the single-match probabilities, as the season odds were.
-4. Tune the half-life and prior size against the same backtest, and extend it to more seasons and leagues.
