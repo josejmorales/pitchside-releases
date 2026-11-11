@@ -93,6 +93,18 @@ You can also leave that line; it does no harm.
 You don't need to change any settings: the installer adds pitchside to your PATH for you (it installs to
 `%LOCALAPPDATA%\pitchside`), which is why step 3 needs a fresh window.
 
+**Prefer to read the installer before running it?** Download it, open it, then run it:
+
+```powershell
+irm https://raw.githubusercontent.com/josejmorales/pitchside-releases/main/install.ps1 -OutFile install.ps1
+notepad install.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+It is short: it downloads the program and its checksum file from this page's
+[latest release](https://github.com/josejmorales/pitchside-releases/releases/latest), stops if they don't match,
+copies the program to `%LOCALAPPDATA%\pitchside`, and adds that folder to your PATH.
+
 ### First run
 
 Pitchside explains what it needs and opens the football-data.org sign-up page in your browser. Enter your
@@ -123,11 +135,45 @@ Remove-Item -Recurse "$HOME\.config\pitchside"          # your key, settings and
 Then remove it from your PATH: search Windows for *Edit the environment variables for your account*, select
 `Path`, and delete the `pitchside` entry. You can also leave it; it does no harm.
 
+### If your antivirus flags pitchside
+
+Security programs (Webroot, for one) sometimes report a new, unsigned program like this with a generic name such
+as `W32.Malware.Gen`. That is a *false positive*: it is flagged because it is new and from an independent developer,
+so it has no reputation yet. It is not because it does anything harmful. It isn't code-signed yet, which is the
+main reason.
+
+You don't have to take that on trust. **Check that your copy is exactly the file that was published:**
+
+1. In PowerShell, print your copy's fingerprint. (If your antivirus already removed it, download
+   `pitchside-windows-x64.exe` from the [latest release](https://github.com/josejmorales/pitchside-releases/releases/latest)
+   and use that file's path instead.)
+
+   ```powershell
+   Get-FileHash "$env:LOCALAPPDATA\pitchside\pitchside.exe" -Algorithm SHA256
+   ```
+
+2. On the same release page, open `SHA256SUMS`. The long string of letters and numbers beside
+   `pitchside-windows-x64.exe` must be the same as the `Hash` PowerShell printed (capitals don't matter).
+
+**If they match,** the file is genuine. Restore it from your antivirus's quarantine or choose *allow*, and consider
+reporting it to the vendor as a false positive so it stops happening to others. **If they don't match,** delete the
+file, don't run it, and [open an issue](https://github.com/josejmorales/pitchside-releases/issues).
+
+What pitchside does on your computer, so you can judge for yourself:
+
+- It talks to two places only: **football-data.org** (your scores and tables, using your own key) and **GitHub**
+  (to check for and download updates).
+- It saves your settings, key and a small cache in `.config\pitchside` in your user folder, and puts its own folder on
+  your user PATH.
+- It doesn't need administrator rights, doesn't start with Windows, and doesn't install services or scheduled tasks.
+
 ### Trouble on Windows
 
 - **"pitchside is not recognized":** close PowerShell and open a new window.
-- **Windows warns about the file:** the app isn't signed yet, so Windows Defender or SmartScreen may
-  question it. Choose *More info*, then *Run anyway*, or tell whoever sent you this.
+- **Your antivirus removed or blocked pitchside:** see [If your antivirus flags pitchside](#if-your-antivirus-flags-pitchside)
+  above. Check the fingerprint first, then restore the file.
+- **Windows (SmartScreen) warns about the file:** it isn't signed yet, so Windows may question it. If the fingerprint
+  matches, choose *More info*, then *Run anyway*.
 
 ---
 
